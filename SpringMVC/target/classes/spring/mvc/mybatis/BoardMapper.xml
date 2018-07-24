@@ -60,6 +60,9 @@
 		DELETE FROM post WHERE postno = #{postno}
 	</delete>
 	
+	<delete id="deleteHidePost" parameterType="Post">
+		
+	</delete>
 	
 	<update id="hidePost" parameterType="Post">
 		UPDATE post SET del = 1 WHERE postno = #{postno}
