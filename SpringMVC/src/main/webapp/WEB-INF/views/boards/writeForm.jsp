@@ -83,10 +83,8 @@
 								<td colspan="2">
 								<c:choose>
 								<c:when test="${param.division1 != null }">
-									<p style="border:1px solid">
-									*${param.writer }님의 글입니다 .<br>
-									${param.contents }
-									</p>
+<pre style="border:1px solid">*${param.writer }님의 글입니다 .
+${param.contents }</pre>
 									<textarea name="contents" rows="25" style="resize: none" required autofocus></textarea>
 								</c:when>
 								<c:otherwise>

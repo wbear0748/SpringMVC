@@ -210,13 +210,28 @@ public class BoardsController {
         model.addAttribute("attachFileList", attachFileList);
         model.addAttribute("commentList", commentList);
         
-        return "boards/view";
+        
+        int del = thisPost.getDel();
+        if(del == 1) {
+        	model.addAttribute("msg", "삭제된 게시글입니다.");
+    		model.addAttribute("url", "back");
+        	return "redirect";
+        } else {
+        	return "boards/view";
+        }
     }
     
     @RequestMapping(value="/delete", method={RequestMethod.GET, RequestMethod.POST})
     public String delete(int postno, String boardcode, Integer curPage, String searchWord) throws Exception {
        
-        boardService.delete(postno);
+    	Post post = boardService.getPost(postno);
+    	int replyCheck = boardService.replyCheck(post);
+    	if(replyCheck>=1) {
+    		boardService.hidePost(post);
+    	} else {
+    		boardService.delete(postno);
+    		boardService.deleteHidePost(post);
+    	}
        
         return "redirect:/boards/list?boardcode=" + boardcode + "&curPage=" + curPage + "&searchWord=" + searchWord;
  

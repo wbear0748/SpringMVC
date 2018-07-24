@@ -7,11 +7,11 @@
 <mapper namespace="spring.mvc.mybatis.BoardMapper">
 
 	<select id="getPostList" parameterType="hashmap" resultType="Post">
-		SELECT postno, title, writer, writeday, hits, division1, division2, commentcount, attachfilenum
+		SELECT postno, title, writer, writeday, hits, division1, division2, commentcount, del, attachfilenum
 		FROM (
 			SELECT @RNUM := @RNUM + 1 AS no, a.*
 			FROM (
-				SELECT a.postno, title, writer, writeday, hits, division1, division2, commentcount,
+				SELECT a.postno, title, writer, writeday, hits, division1, division2, commentcount, del,
 				count(distinct(f.attachfileno)) attachfilenum
 				FROM post a LEFT JOIN attachfile f ON (a.postno = f.postno)
 				WHERE boardcode=#{boardcode}
@@ -19,7 +19,7 @@
 					AND (title LIKE '%${searchWord}%' OR
 					contents LIKE '%${searchWord}%')
 				</if>
-				GROUP BY a.postno, title, writer, writeday, hits, division1, division2, commentcount
+				GROUP BY a.postno, title, writer, writeday, hits, division1, division2, commentcount, del
 				ORDER BY division1 DESC, division2 ASC
 			) a, (SELECT @RNUM := 0) b
 		) a
@@ -59,6 +59,23 @@
 	<delete id="delete" parameterType="int">
 		DELETE FROM post WHERE postno = #{postno}
 	</delete>
+	
+	
+	<update id="hidePost" parameterType="Post">
+		UPDATE post SET del = 1 WHERE postno = #{postno}
+	</update>
+	
+	<select id="replyCheck" parameterType="Post" resultType="int">
+		select count(*) from post where division1=#{division1} and division2
+		<choose>
+			<when test="division2 == null">
+				is not null
+			</when>
+			<otherwise>
+				like concat(#{division2},'%') and length(division2) = length(#{division2}) + 1
+			</otherwise>
+		</choose>
+	</select>
 	
 	<select id="getBoardName" parameterType="string" resultType="string">
 		SELECT boardname FROM board WHERE boardcode = #{boardcode}

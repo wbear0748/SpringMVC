@@ -23,6 +23,7 @@ CREATE TABLE post (
 	division1 int DEFAULT 1,
 	division2 varchar(20),
 	commentcount int NOT NULL,
+	del bit DEFAULT 0,
 	boardcode varchar(20)
 );
 
@@ -101,3 +102,20 @@ select exists(select * from comment where division1=1 and division2 is not null 
 
 
 SELECT * FROM (SELECT @RNUM := @RNUM + 1 AS NO, a.* FROM (SELECT * FROM post WHERE boardcode='free' ORDER BY division1 DESC, division2 ASC) a, (SELECT @RNUM := 0) b) a WHERE NO BETWEEN 1 AND 30
+
+
+select exists(select * from post where division1=54 and division2 is not null)
+
+select exists(select * from post where division1=54 and division2 like 'a%' and length(division2) = length('a') + 1)
+
+delete from post where postno=140
+
+select * from post where del=1 and division2 is not null and (select exists(select * from post where division2 < division2 and division2 < concat(division2, 'a'))
+
+
+select * from post where division2 < concat(division2,'a')
+
+select division2 >= concat(division2,'a') from post
+
+
+

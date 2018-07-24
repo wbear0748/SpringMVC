@@ -13,6 +13,7 @@ public class Post {
 	private int division1;
 	private String division2;
 	private int commentcount;
+	private int del;
 	private String boardcode;
 	private int attachFileNum;
 	
@@ -77,6 +78,12 @@ public class Post {
 	}
 	public void setCommentcount(int commentcount) {
 		this.commentcount = commentcount;
+	}
+	public int getDel() {
+		return del;
+	}
+	public void setDel(int del) {
+		this.del = del;
 	}
 	public String getBoardcode() {
 		return boardcode;

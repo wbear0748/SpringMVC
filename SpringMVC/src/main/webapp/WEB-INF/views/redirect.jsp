@@ -4,8 +4,16 @@
 <html> 
 <body> 
 <script type="text/javascript"> 
-alert("아이디와 비밀번호를 확인해주세요."); 
-document.location.href = '/users/login'; 
+var message = '${msg}';
+var returnUrl = '${url}'
+
+alert(message); 
+
+if(returnUrl == 'back') {
+	history.back()
+} else {
+	document.location.href = returnUrl;
+}
 </script>
 </body>
 </html> 

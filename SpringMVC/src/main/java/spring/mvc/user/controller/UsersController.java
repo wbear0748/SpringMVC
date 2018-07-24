@@ -4,6 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -39,7 +40,10 @@ public class UsersController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(String userid, String pwd, HttpSession session) throws Exception {
+	public String login(String userid, String pwd, HttpSession session, Model model) throws Exception {
+		model.addAttribute("msg", "아이디와 비밀번호를 확인해주세요.");
+		model.addAttribute("url", "/users/login");
+		
 		User loginUser = userService.login(userid, pwd);
 		if (loginUser != null) {
 			session.setAttribute("check", loginUser);

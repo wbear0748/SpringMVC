@@ -53,7 +53,18 @@ public class BoardServiceImpl implements BoardService {
 
 	public void delete(int postno) {
 		boardMapper.delete(postno);
-
+	}
+	
+	public int replyCheck(Post post) {
+		return boardMapper.replyCheck(post);
+	}
+	
+	public void hidePost(Post post) {
+		boardMapper.hidePost(post);
+	}
+	
+	public int deleteHidePost(Post post) {
+		return boardMapper.deleteHidePost(post);
 	}
 
 	public String getBoardName(String boardcode) {

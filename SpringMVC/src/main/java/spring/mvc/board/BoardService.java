@@ -19,6 +19,12 @@ public interface BoardService {
 	public void update(Post post);
 
 	public void delete(int postno);
+	
+	public int replyCheck(Post post);
+	
+	public void hidePost(Post post);
+	
+	public int deleteHidePost(Post post);
 
 	public String getBoardName(String boardcode);
 
