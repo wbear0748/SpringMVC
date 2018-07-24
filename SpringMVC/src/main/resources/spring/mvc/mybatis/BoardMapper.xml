@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="spring.mvc.mybatis.BoardMapper">
+
+	<select id="getPostList" parameterType="hashmap" resultType="Post">
+		SELECT postno, title, writer, writeday, hits, division1, division2, commentcount, attachfilenum
+		FROM (
+			SELECT @RNUM := @RNUM + 1 AS no, a.*
+			FROM (
+				SELECT a.postno, title, writer, writeday, hits, division1, division2, commentcount,
+				count(distinct(f.attachfileno)) attachfilenum
+				FROM post a LEFT JOIN attachfile f ON (a.postno = f.postno)
+				WHERE boardcode=#{boardcode}
+				<if test="searchWord != null">
+					AND (title LIKE '%${searchWord}%' OR
+					contents LIKE '%${searchWord}%')
+				</if>
+				GROUP BY a.postno, title, writer, writeday, hits, division1, division2, commentcount
+				ORDER BY division1 DESC, division2 ASC
+			) a, (SELECT @RNUM := 0) b
+		) a
+		WHERE no BETWEEN #{start} AND #{end}
+	</select>
+	
+	
+	<select id="getTotalRecord" parameterType="hashmap" resultType="int">
+  		SELECT count(*) FROM post WHERE boardcode = #{boardcode}
+  		<if test="searchWord != null">
+			AND (title LIKE '%${searchWord}%' OR
+			contents LIKE '%${searchWord}%')
+		</if>
+ 	</select> 
+	
+	<insert id="insert" parameterType="Post">
+		INSERT INTO post (title, contents, writer, hits, writeday, division1, commentcount, boardcode)
+		VALUES(#{title}, #{contents}, #{writer}, 0, now(), ((select IFNULL(MAX(division1),0) from post a where boardcode=#{boardcode})+1), 0, #{boardcode})		
+	</insert>
+	
+	<insert id="reply" parameterType="Post">
+		INSERT INTO post (title, contents, writer, hits, writeday, division1, division2, commentcount, boardcode)
+		<choose>
+			<when test="division2 == null">
+				VALUES(#{title}, #{contents}, #{writer}, 0, now(), #{division1}, (char(ascii((select IFNULL(MAX(division2),'`') from post a where boardcode=#{boardcode} and division1=#{division1}))+1)), 0, #{boardcode})
+			</when>
+			<otherwise>
+				VALUES(#{title}, #{contents}, #{writer}, 0, now(), #{division1}, concat(#{division2}, char(ascii(IFNULL(substr((select MAX(division2) from post a where boardcode=#{boardcode} and division1=#{division1} and division2 like concat(#{division2},'%') and length(division2) &gt; length(#{division2})), -1),'`'))+1)), 0, #{boardcode})
+			</otherwise>
+		</choose>
+	</insert>
+	
+	<update id="update" parameterType="Post">
+		UPDATE post SET title=#{title}, contents=#{contents} WHERE postno=#{postno}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM post WHERE postno = #{postno}
+	</delete>
+	
+	<select id="getBoardName" parameterType="string" resultType="string">
+		SELECT boardname FROM board WHERE boardcode = #{boardcode}
+	</select>
+
+	<update id="increaseHits" parameterType="int">
+		UPDATE post SET hits = hits + 1 WHERE postno = #{postno}
+	</update>
+
+	<resultMap type="Post" id="postclob">
+		<result property="contents" column="contents" jdbcType="CLOB"
+			javaType="java.lang.String" />
+	</resultMap>
+
+	<select id="getPost" parameterType="int" resultMap="postclob">
+		SELECT *
+		FROM
+		post
+		WHERE postno = #{postno}
+	</select>
+
+	<select id="getPrevPost" parameterType="hashmap" resultType="Post">
+		SELECT postno, title
+		FROM
+		(SELECT @RNUM := @RNUM + 1 AS no,a.*
+		FROM
+		(SELECT postno, title FROM post
+		WHERE boardcode = #{boardcode} AND postno &lt; #{postno} AND division2 is null
+		ORDER BY division1 DESC) a, (SELECT @RNUM := 0) b) a
+		WHERE no = 1
+	</select>
+
+	<select id="getNextPost" parameterType="hashmap" resultType="Post">
+		SELECT postno, title
+		FROM
+		(SELECT @RNUM := @RNUM + 1 AS no,a.*
+		FROM
+		(SELECT postno, title FROM post
+		WHERE boardcode = #{boardcode} AND postno &gt; #{postno} AND division2 is null
+		ORDER BY division1 ASC) a, (SELECT @RNUM := 0) b) a
+		WHERE no = 1
+	</select>
+	
+
+	<update id="increaseComment" parameterType="int">
+		UPDATE post SET
+		commentcount = commentcount + 1 WHERE postno = #{postno}
+	</update>
+	
+	<update id="decreaseComment" parameterType="int">
+		UPDATE post SET
+		commentcount = commentcount - 1 WHERE postno = #{postno}
+	</update>
+
+	<insert id="insertComment" parameterType="Comment">
+		INSERT INTO comment
+		(commentwriter, commentcontents, writeday, division1, division2, postno)
+		VALUES
+		(#{commentwriter}, #{commentcontents}, now(), ((select IFNULL(MAX(division1),0) from comment a where postno=#{postno})+1), NULL, #{postno})
+	</insert>
+	<insert id="replyComment" parameterType="Comment">
+		INSERT INTO comment
+		(commentwriter, commentcontents, writeday, division1, division2, postno)
+		VALUES
+		(#{commentwriter}, #{commentcontents}, now(), #{division1}, ((select IFNULL(MAX(division2),0) from comment a where postno=#{postno} and division1=#{division1})+1), #{postno})
+	</insert>
+	<update id="updateComment" parameterType="Comment">
+		UPDATE comment SET
+		commentcontents = #{commentcontents} WHERE commentno = #{commentno}
+	</update>
+
+	<update id="hideComment" parameterType="Comment">
+		UPDATE comment SET
+		del = 1 WHERE commentno = #{commentno}
+	</update>
+
+	<select id="commentReplyCheck" parameterType="Comment" resultType="int">
+		select count(*) from comment where division1=#{division1} and division2 is not null and postno=#{postno}
+	</select>
+
+	<delete id="deleteComment" parameterType="int">
+		DELETE FROM comment WHERE commentno = #{commentno}
+	</delete>
+	
+	<select id="parentDelCheck" parameterType="Comment" resultType="int">
+		select del from comment where division1=#{division1} and division2 is null and postno=#{postno}
+	</select>
+	
+	<delete id="deleteHide" parameterType="Comment">
+		DELETE FROM comment WHERE division1 = #{division1} and postno = #{postno}
+	</delete>
+
+	<select id="getComment" parameterType="int" resultType="Comment">
+		SELECT *
+		FROM comment
+		WHERE commentno = #{commentno}
+	</select>
+
+	<select id="getCommentList" parameterType="int" resultType="Comment">
+		SELECT *
+		FROM comment
+		WHERE postno = #{postno}
+		ORDER BY division1 asc, division2 asc
+	</select>
+
+	<select id="getNewPost" resultType="Post">
+		SELECT *
+		FROM (SELECT * FROM post ORDER BY postno DESC) a
+		LIMIT 1
+	</select>
+
+	<insert id="insertAttachFile" parameterType="AttachFile">
+		INSERT INTO attachfile (filename, filetype, filesize, postno)
+		VALUES
+		(#{filename}, #{filetype}, #{filesize}, #{postno})
+	</insert>
+
+	<select id="getAttachFileList" parameterType="int" resultType="AttachFile">
+		SELECT attachfileno, filename, filetype, filesize, postno
+		FROM attachfile
+		WHERE postno = #{postno}
+		ORDER BY attachfileno
+	</select>
+
+	<delete id="deleteFile" parameterType="int">
+		DELETE FROM attachfile WHERE attachfileno = #{attachFileNo}
+	</delete>
+
+	
+	
+</mapper>
