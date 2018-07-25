@@ -154,7 +154,12 @@
 
 					<div id="gul-content">
 						<h6>작성자 ${thisPost.writer }, 조회수 ${thisPost.hits }</h6>
-						<p style="margin-top: 20px; margin-bottom: 50px">${thisPost.htmlContent }</p>
+						<p style="width: 590px; margin-top: 20px; margin-bottom: 40px; word-break:break-all">${thisPost.contents }</p>
+						<c:if test="${thisPost.question != null }">
+							<hr />
+							${thisPost.question }
+							<hr />
+						</c:if>
 						<p id="file-list" style="text-align: right;">
 							<c:forEach var="file" items="${attachFileList }" varStatus="status">
 								<a href="javascript:download('${file.filename }')">${file.filename }</a>
@@ -164,7 +169,7 @@
 								<br />
 							</c:forEach>
 						</p>
-						<table style="margin-bottom:20px">
+						<table style="margin-bottom:20px; margin-top:50px">
 						<tr>
 							<td>
 								<c:if test="${thisPost.writer eq nick}">
@@ -523,7 +528,7 @@
 				</c:if>
 				<input type="hidden" name="writer" value="${thisPost.writer }" />
 				<input type="hidden" name="title" value="${thisPost.title }" />
-				<input type="hidden" name="contents" value="${thisPost.contents }" />
+				<input type="hidden" name="contents" value="${thisPost.htmlContent }" />
 				<input type="hidden" name="curPage" value="${param.curPage }" />
 				<input type="hidden" name="searchWord" value="${param.searchWord }" />
 			</p>

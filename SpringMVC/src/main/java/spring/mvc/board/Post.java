@@ -14,8 +14,10 @@ public class Post {
 	private String division2;
 	private int commentcount;
 	private int del;
+	private int child;
 	private String boardcode;
 	private int attachFileNum;
+	private String question;
 	
 	public static final String ENTER = System.getProperty("line.separator");
 	
@@ -91,7 +93,12 @@ public class Post {
 	public void setBoardcode(String boardcode) {
 		this.boardcode = boardcode;
 	}
-	
+	public String getQuestion() {
+		return question;
+	}
+	public void setQuestion(String question) {
+		this.question = question;
+	}
 	public String getWriteDate() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(writeday);
@@ -103,9 +110,9 @@ public class Post {
 	
     public String getHtmlContent() {
         if (contents != null) {
-            return contents.replaceAll(ENTER, "<br />");
+            return contents.replace("\"", "'");
         }
-        return null;  
+        return null;
     }
 	
 }

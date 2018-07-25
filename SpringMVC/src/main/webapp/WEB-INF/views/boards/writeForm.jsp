@@ -53,6 +53,7 @@
 							<input type="hidden" name="boardcode" value="${param.boardcode }" />
 							<c:if test="${param.division1 != null}">
 								<input type="hidden" name="division1" value="${param.division1 }" />
+								<input type="hidden" name="question" value="*${param.writer }님의 글입니다.<br>*제목 : ${param.title}<br>${param.contents }" />
 							</c:if>
 							<c:if test="${param.division2 != null}">
 								<input type="hidden" name="division2" value="${param.division2 }" />
@@ -67,7 +68,7 @@
 
 						<table id="write-form">
 							<tr>
-								<td>제목${param.division1 }</td>
+								<td>제목</td>
 								<td>
 								<c:choose>
 									<c:when test="${param.division1 == null }">
@@ -83,12 +84,14 @@
 								<td colspan="2">
 								<c:choose>
 								<c:when test="${param.division1 != null }">
-<pre style="border:1px solid">*${param.writer }님의 글입니다 .
-${param.contents }</pre>
-									<textarea name="contents" rows="25" style="resize: none" required autofocus></textarea>
+									<p style="border:1px solid; width:590px; word-break:break-all; overflow:auto; height:200px">
+									*${param.writer }님의 글입니다 .<br />
+									${param.contents }
+									</p>
+									<textarea name="contents" rows="17" style="resize: none"></textarea>
 								</c:when>
 								<c:otherwise>
-								<textarea name="contents" rows="17" style="resize: none" required></textarea>
+								<textarea name="contents" rows="17" style="resize: none"></textarea>
 								</c:otherwise>
 								</c:choose>
 								<script type="text/javascript">

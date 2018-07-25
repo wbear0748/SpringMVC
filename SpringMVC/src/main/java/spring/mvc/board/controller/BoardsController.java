@@ -230,7 +230,11 @@ public class BoardsController {
     		boardService.hidePost(post);
     	} else {
     		boardService.delete(postno);
-    		boardService.deleteHidePost(post);
+    		while(true) {
+    			int num = boardService.deleteHidePost(post);
+    			if(num==0)
+    				break;
+    		} 
     	}
        
         return "redirect:/boards/list?boardcode=" + boardcode + "&curPage=" + curPage + "&searchWord=" + searchWord;

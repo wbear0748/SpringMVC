@@ -45,7 +45,7 @@ public class BoardServiceImpl implements BoardService {
 	public int reply(Post post) {
 		return boardMapper.reply(post);
 	}
-
+	
 	public void update(Post post) {
 		boardMapper.update(post);
 

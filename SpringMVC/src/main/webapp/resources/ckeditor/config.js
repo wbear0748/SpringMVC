@@ -8,6 +8,11 @@ CKEDITOR.editorConfig = function( config ) {
 	// For complete reference see:
 	// http://docs.ckeditor.com/#!/api/CKEDITOR.config
 
+	config.enterMode = CKEDITOR.ENTER_BR;
+	config.shiftEnterMode = CKEDITOR.ENTER_P;
+	config.fillEmptyBlocks = false;
+	config.height = '300px';
+	
 	// The toolbar groups arrangement, optimized for two toolbar rows.
 	config.toolbarGroups = [
 		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
@@ -35,4 +40,5 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// Simplify the dialog windows.
 	config.removeDialogTabs = 'image:advanced;link:advanced';
+	
 };

@@ -63,7 +63,7 @@
 </tr>
 <tr>
     <td colspan="2">
-        <textarea name="contents" rows="17" required>${thisPost.contents }</textarea>
+        <textarea name="contents" rows="17">${thisPost.contents }</textarea>
     	
     	<script type="text/javascript">
 			CKEDITOR.replace('contents');

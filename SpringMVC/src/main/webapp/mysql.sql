@@ -17,6 +17,7 @@ CREATE TABLE post (
 	postno int auto_increment PRIMARY KEY,
 	title varchar(100) NOT NULL,
 	contents text NOT NULL,
+	question text,
 	writer varchar(20) NOT NULL,
 	hits int NOT NULL,
 	writeday datetime NOT NULL,
@@ -24,6 +25,7 @@ CREATE TABLE post (
 	division2 varchar(20),
 	commentcount int NOT NULL,
 	del bit DEFAULT 0,
+	child bit DEFAULT 0,
 	boardcode varchar(20)
 );
 
@@ -41,7 +43,12 @@ CREATE TABLE comment (
 ALTER TABLE post ADD FOREIGN KEY(boardcode) REFERENCES board(boardcode) ON UPDATE CASCADE ON DELETE CASCADE;
 ALTER TABLE comment ADD FOREIGN KEY(postno) REFERENCES post(postno) ON UPDATE CASCADE ON DELETE CASCADE;
 
+alter table post add question text;
+alter table post drop question
+
 alter table comment change division2 division2 int default 1
+
+alter table post modify question MEDIUMTEXT;
  
 insert into board(boardname) values('Q&A게시판');
 select * from member;
@@ -108,14 +115,33 @@ select exists(select * from post where division1=54 and division2 is not null)
 
 select exists(select * from post where division1=54 and division2 like 'a%' and length(division2) = length('a') + 1)
 
-delete from post where postno=140
+select * from post where concat(division2,'a')='aaa'
 
-select * from post where del=1 and division2 is not null and (select exists(select * from post where division2 < division2 and division2 < concat(division2, 'a'))
+DELIMITER $$
+DROP FUNCTION IF EXISTS child_check$$
+CREATE FUNCTION child_check(value1 INT, value2 VARCHAR(50)) RETURNS INT
+BEGIN
+	DECLARE num INT;
+	SELECT count(*) INTO num FROM post WHERE division1=value1 AND division2 LIKE concat(value2,'%') AND length(division2)=length(value2)+1;
+	RETURN num;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+DROP FUNCTION IF EXISTS child_check2$$
+CREATE FUNCTION child_check2(value1 INT) RETURNS INT
+BEGIN
+	DECLARE num INT;
+	SELECT count(*) INTO num FROM post WHERE division1=value1 and division2 is not null;
+	RETURN num;
+END $$
+DELIMITER ;
+
+SELECT count(*) FROM post WHERE division1=52 and division2 is not null
+
+select child_check2(52)
+
+DELETE FROM post WHERE division2 is NOT null AND del=1 AND child_check(division1,division2)=0 OR division2 is null AND del=1 AND child_check2(division1)=0
 
 
-select * from post where division2 < concat(division2,'a')
-
-select division2 >= concat(division2,'a') from post
-
-
-
+select length(contents) from post where postno=152
