@@ -157,7 +157,7 @@
 						<p style="width: 590px; margin-top: 20px; margin-bottom: 40px; word-break:break-all">${thisPost.contents }</p>
 						<c:if test="${thisPost.question != null }">
 							<hr />
-							${thisPost.question }
+							<p style="overflow:auto; max-height:250px; word-break:break-all">${thisPost.question }</p>
 							<hr />
 						</c:if>
 						<p id="file-list" style="text-align: right;">
@@ -169,7 +169,7 @@
 								<br />
 							</c:forEach>
 						</p>
-						<table style="margin-bottom:20px; margin-top:50px">
+						<table style="margin-bottom:20px; margin-top:30px">
 						<tr>
 							<td>
 								<c:if test="${thisPost.writer eq nick}">

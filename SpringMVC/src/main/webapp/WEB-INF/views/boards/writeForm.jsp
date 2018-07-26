@@ -84,14 +84,14 @@
 								<td colspan="2">
 								<c:choose>
 								<c:when test="${param.division1 != null }">
-									<p style="border:1px solid; width:590px; word-break:break-all; overflow:auto; height:200px">
+									<p style="border:1px solid; width:590px; word-break:break-all; overflow:auto; max-height:200px">
 									*${param.writer }님의 글입니다 .<br />
 									${param.contents }
 									</p>
-									<textarea name="contents" rows="17" style="resize: none"></textarea>
+									<textarea name="contents" rows="17"></textarea>
 								</c:when>
 								<c:otherwise>
-								<textarea name="contents" rows="17" style="resize: none"></textarea>
+								<textarea name="contents" rows="17"></textarea>
 								</c:otherwise>
 								</c:choose>
 								<script type="text/javascript">
