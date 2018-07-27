@@ -390,23 +390,32 @@
 										</c:if>
 									</td>
 									<td>
-								<span style="display:block; width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-								<c:forEach begin="1" end="${fn:length(post.division2) }" step="1">
-						      	  &nbsp;&nbsp;
-						    	</c:forEach>
-								<a href="javascript:goView('${post.postno }')">
-								<img src="../resources/images/reply-arrow.png" width="10px" height="10px" />
-								${post.title }
-									<c:if test="${post.attachFileNum > 0 }">
-										<img src="../resources/images/attach.png" alt="첨부파일" />
-									</c:if>
-									<c:if test="${post.commentcount!=0}">
-										<span class="bbs-strong">[${post.commentcount }]</span>
-									</c:if>
-								</a></span></td>
-								<td style="text-align: center;">${post.writer }</td>
-								<td style="text-align: center;">${post.writeDate }</td>
-								<td style="text-align: center;">${post.hits }</td>
+										<span style="display:block; width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+											<c:forEach begin="1" end="${fn:length(post.division2) }" step="1">
+									      	  &nbsp;&nbsp;
+									    	</c:forEach>
+										<c:choose>
+											<c:when test="${post.del eq 0 }">
+												<a href="javascript:goView('${post.postno }')">
+												<img src="../resources/images/reply-arrow.png" width="10px" height="10px" />
+												${post.title }
+													<c:if test="${post.attachFileNum > 0 }">
+														<img src="../resources/images/attach.png" alt="첨부파일" />
+													</c:if>
+													<c:if test="${post.commentcount!=0}">
+														<span class="bbs-strong">[${post.commentcount }]</span>
+													</c:if>
+												</a>
+											</c:when>
+											<c:otherwise>
+												<img src="../resources/images/reply-arrow.png" width="10px" height="10px" /><i> 삭제된 게시글입니다.</i>
+											</c:otherwise>
+										</c:choose>
+									</span>
+								</td>
+								<td style="text-align: center;"><c:if test="${post.del eq 0}">${post.writer }</c:if></td>
+								<td style="text-align: center;"><c:if test="${post.del eq 0}">${post.writeDate }</c:if></td>
+								<td style="text-align: center;"><c:if test="${post.del eq 0}">${post.hits }</c:if></td>
 							</tr>
 							</c:when>
 							<c:otherwise>
@@ -416,22 +425,30 @@
 												<img src="../resources/images/arrow.gif" alt="현재글" />
 											</c:when>
 											<c:otherwise>
-										    	${no - status.index }
+										    	${post.division1 }
 										    </c:otherwise>
 										</c:choose>
 									</td>
 								<td>
-								<a href="javascript:goView('${post.postno }')" style="display:block; width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${post.title }
-									<c:if test="${post.attachFileNum > 0 }">
-										<img src="../resources/images/attach.png" alt="첨부파일" />
-									</c:if>
-									<c:if test="${post.commentcount!=0}">
-										<span class="bbs-strong">[${post.commentcount }]</span>
-									</c:if>
-								</a></td>
-								<td style="text-align: center;">${post.writer }</td>
-								<td style="text-align: center;">${post.writeDate }</td>
-								<td style="text-align: center;">${post.hits }</td>
+									<c:choose>
+										<c:when test="${post.del eq 0 }">
+											<a href="javascript:goView('${post.postno }')" style="display:block; width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${post.title }
+												<c:if test="${post.attachFileNum > 0 }">
+													<img src="../resources/images/attach.png" alt="첨부파일" />
+												</c:if>
+												<c:if test="${post.commentcount!=0}">
+													<span class="bbs-strong">[${post.commentcount }]</span>
+												</c:if>
+											</a>
+										</c:when>
+										<c:otherwise>
+											<i>삭제된 게시글입니다.</i>
+										</c:otherwise>
+									</c:choose>
+								</td>
+								<td style="text-align: center;"><c:if test="${post.del eq 0}">${post.writer }</c:if></td>
+								<td style="text-align: center;"><c:if test="${post.del eq 0}">${post.writeDate }</c:if></td>
+								<td style="text-align: center;"><c:if test="${post.del eq 0}">${post.hits }</c:if></td>
 							</tr>
 							</c:otherwise>
 						</c:choose>
